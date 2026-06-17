@@ -54,6 +54,132 @@ Interpret project statements using these labels:
 
 Do not convert hypotheses or defaults into fixed scientific requirements.
 
+
+## Mandatory milestone workflow
+
+Every scientifically distinct milestone must follow the same gated workflow.
+Planning and implementation are separate Codex tasks. Do not combine them unless
+the user explicitly waives the gate for a narrowly mechanical change.
+
+You should store the temporal plan in a file at a specific folder: 
+"./temp_plan/" because stating the plan in the console is not human-readable and bad for plan editting.
+The file name and file formats are free to choose since it is only for demonstrative and discussion purposes.
+The user may provide feedback under ./temp_plan/feedbacks.md.
+
+### Phase A — inspect and propose
+
+For the current milestone:
+
+1. Read `AGENTS.md`, `PROJECT_CONTEXT.md`, `PLANS.md`, applicable approved
+   milestone plans, and relevant code/tests/configuration.
+2. Inspect actual third-party APIs and current repository behavior.
+3. Do not edit project files, install packages, or run environment-modifying
+   commands unless the user explicitly authorizes this planning task to do so.
+4. Produce a milestone proposal containing:
+   - verified current state and dependency behavior;
+   - proposed scope and explicit non-goals;
+   - files to create or modify and their responsibilities;
+   - data flow, equations, units, tensor shapes, dtypes, and update ordering;
+   - tests, numerical tolerances, commands, and acceptance criteria;
+   - unresolved scientific and engineering decisions;
+   - risks, assumptions, and expected consequences of each unresolved option.
+5. Stop after the proposal. Do not implement.
+
+### Phase B — discuss and revise
+
+1. Treat the proposal as unapproved until the user explicitly accepts it.
+2. Answer questions and revise the proposal without starting implementation.
+3. Do not silently resolve choices that can change experimental meaning.
+4. When alternatives exist, present the smallest viable options and their
+   scientific consequences.
+5. Continue until scope, semantics, validation, and stop conditions are explicit.
+
+### Phase C — freeze the approved milestone plan
+
+After explicit approval:
+
+1. Save the accepted plan under:
+
+   `docs/milestones/milestone_<N>_<short_name>.md`
+
+2. Include at least:
+   - status: `Approved`;
+   - approval date if known;
+   - milestone scope;
+   - explicit non-goals;
+   - implementation steps;
+   - acceptance criteria;
+   - stop conditions;
+   - unresolved or deferred items;
+   - plans superseded, if any.
+3. The approved milestone file is authoritative for that implementation pass.
+4. Do not overwrite high-level project methodology in `PROJECT_CONTEXT.md` or the
+   milestone sequence in `PLANS.md` with low-level implementation details.
+5. If the approved plan conflicts with `AGENTS.md` or fixed scientific invariants,
+   stop and report the conflict before implementation.
+
+### Phase D — implement only the approved plan
+
+Implementation must be a separate task after plan approval.
+
+1. Re-read `AGENTS.md`, `PROJECT_CONTEXT.md`, `PLANS.md`, and the approved
+   milestone plan.
+2. Implement only the approved scope.
+3. Do not redesign the experiment, add features, broaden dependencies, or begin a
+   later milestone.
+4. If new evidence requires a material deviation:
+   - stop before making the conflicting change;
+   - report the evidence and affected assumptions;
+   - propose the smallest plan amendment;
+   - wait for explicit approval;
+   - update the milestone plan before continuing.
+5. Small implementation details that do not affect scientific meaning may be
+   resolved conservatively and documented in the final report.
+6. Phase D from different milestones should be clearly separated.
+
+### Phase E — validate and report
+
+1. Run all tests and acceptance checks specified by the approved plan.
+2. Do not weaken, remove, or reinterpret a failed acceptance check merely to
+   complete the milestone.
+3. Report:
+   - files changed;
+   - commands run;
+   - tests and quantitative results;
+   - acceptance criteria status, item by item;
+   - deviations and approved amendments;
+   - assumptions made;
+   - unresolved scientific or engineering risks.
+4. Stop after reporting. Do not start the next milestone.
+
+### Phase F — user review and closure
+
+The milestone is not complete merely because code was produced.
+
+1. Wait for the user to review the diff, evidence, and acceptance results.
+2. The user decides whether the milestone:
+   - passes;
+   - needs a corrective implementation pass;
+   - requires a plan amendment;
+   - should be abandoned or deferred.
+3. Plan the next milestone only after explicit closure of the current one.
+
+### When the full gate may be skipped
+
+The user may explicitly waive the planning gate for a narrowly mechanical task,
+such as:
+
+- correcting a typo;
+- applying an already approved rename;
+- adding a precisely specified assertion;
+- rerunning an approved experiment configuration;
+- making a local refactor with no behavioral or scientific effect.
+
+Simulator equations, state updates, gradient construction, objectives, data
+splits, controller parameterization, experiment comparisons, dependency changes,
+and acceptance tests always require the full workflow unless the user explicitly
+states otherwise.
+
 ## Operating rules
 
 1. Inspect before editing.
@@ -63,8 +189,8 @@ Do not convert hypotheses or defaults into fixed scientific requirements.
    - the missing decision;
    - the smallest viable options;
    - the expected scientific effect of each option.
-4. Prefer the smallest implementation that satisfies the current milestone.
-5. Implement and validate one milestone before beginning the next.
+4. Prefer the smallest implementation that satisfies the approved milestone plan.
+5. Follow the mandatory milestone workflow and never begin the next milestone automatically.
 6. Do not add dependencies unless the current milestone requires them.
 7. Do not add fallback clipping, safety branches, smoothing, or regularization
    that changes simulator semantics without documenting and obtaining approval.

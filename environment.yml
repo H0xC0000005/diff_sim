@@ -1,0 +1,19 @@
+name: differential_sim
+channels:
+  - pytorch
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pytorch
+  - cpuonly
+  - numpy
+  - scipy
+  - pandas
+  - matplotlib
+  - pyyaml
+  - pytest
+  - pip:
+      - diffidm==0.0.3
+variables:
+  MPLCONFIGDIR: /tmp/matplotlib
