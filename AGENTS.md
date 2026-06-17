@@ -62,7 +62,7 @@ Planning and implementation are separate Codex tasks. Do not combine them unless
 the user explicitly waives the gate for a narrowly mechanical change.
 
 You should store the temporal plan in a file at a specific folder: 
-"./temp_plan/" because stating the plan in the console is not human-readable and bad for plan editting.
+"./temp_content/" because stating the plan in the console is not human-readable and bad for plan editting. You should choose the appropriate subfolder to put the plan.
 The file name and file formats are free to choose since it is only for demonstrative and discussion purposes.
 The user may provide feedback under ./temp_plan/feedbacks.md.
 
