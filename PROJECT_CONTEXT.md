@@ -221,6 +221,12 @@ small subset, not the main experiment.
 Run the same optimizer, initialization, scenarios, objective, and update budget
 for each gradient horizon. Evaluate on held-out leader profiles.
 
+After Milestone 1 Phase F, the structured-controller direct optimization path
+uses normalized controller inputs only. The SI-unit Milestone 1 validation was
+weak at the primary alpha and should be treated as parameterization-sensitivity
+evidence, not as a Milestone 2 branch, unless a later approved plan opens a
+separate parameterization study.
+
 ### Stage 3: small-model training
 
 Train the same small MLP with selected gradient modes. Compare held-out objective,
@@ -238,6 +244,10 @@ To make the comparison interpretable:
 - same parameter bounds;
 - same train/evaluation split;
 - same numerical precision unless explicitly studied;
+- if CUDA/GPU execution is used, CPU/GPU parity must be checked within approved
+  tolerances before GPU results are treated as main evidence;
+- device, dtype, PyTorch, CUDA availability, and GPU metadata must be recorded
+  in result artifacts when device choice is part of the experiment;
 - report failures and unsafe trajectories instead of silently clipping them.
 
 ## 12. Deferred topics

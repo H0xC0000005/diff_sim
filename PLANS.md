@@ -52,6 +52,10 @@ Stop and ask before proceeding if:
 
 ## Milestone 1 — local gradient utility
 
+Status: Closed as passing on 2026-06-23. See
+`docs/milestones/milestone_1_local_gradient_utility.md` for the approved plan,
+amendments, results handoff, and Phase F closure decisions.
+
 ### Goal
 
 Compare local, short, and full temporal gradient horizons using one-step descent.
@@ -90,6 +94,9 @@ If no gradient mode beats random directions:
 
 ## Milestone 2 — direct structured optimization
 
+Status: Next milestone to plan. Do not implement before the normal milestone
+planning gate.
+
 ### Goal
 
 Determine whether Stage 1 local utility predicts iterative optimization of the
@@ -97,17 +104,50 @@ four-parameter controller.
 
 ### Required work
 
-1. Use identical initialization and optimizer settings for every gradient mode.
-2. Run a fixed optimization budget.
-3. Evaluate periodically on held-out leader profiles.
-4. Store total and component losses.
-5. Compare Stage 1 ranking with final optimization ranking.
+1. Use normalized controller inputs only.
+2. Compare the approved horizons:
+   - `K = 1`;
+   - `K = 3`;
+   - `K = 6`;
+   - `K = 10`;
+   - `K = T`.
+3. Use the six approved controller initializations:
+   - `T_init = [0.9, 1.2, 1.4, 1.6, 1.9, 2.2]`.
+4. Use identical initialization, optimizer family, optimizer parameters,
+   learning-rate policy, scenarios, objective, evaluation schedule, and update
+   budget for every gradient mode.
+5. Choose the exact optimizer family, learning-rate/search procedure, optimizer
+   parameters, optimization budget, evaluation frequency, logging frequency, and
+   CPU/GPU parity tolerances during Milestone 2 planning.
+6. Run CPU/GPU parity checks before using CUDA results as main evidence.
+7. If parity checks pass, run full CPU and CUDA structured-optimization
+   comparisons with identical settings; the CPU run must duplicate the full GPU
+   run as a faithful comparison.
+8. Evaluate periodically on held-out leader profiles under no-grad evaluation.
+9. Store total and component losses, final parameters, failure flags, device
+   metadata, runtime, and enough per-initialization detail to compare
+   variability.
+10. Compare Stage 1 ranking with final optimization ranking.
+11. Do not implement batching across scenarios or initializations as first-hand
+   scope. Add batching only if preliminary timing evidence justifies it and the
+   user approves that scope.
 
 ### Acceptance criteria
 
 - reproducible optimization curves;
 - held-out evaluation separated from training;
 - no per-mode objective or hyperparameter tuning;
+- normalized-input-only comparison; SI-unit evaluation is not part of Milestone
+  2 unless a later approved plan opens a separate parameterization study;
+- CPU/GPU parity check passes within approved tolerances before CUDA results are
+  used as main evidence, or GPU execution is reported as blocked and CPU remains
+  the valid path;
+- CPU and CUDA runs use identical optimizer/scenario/initialization/evaluation
+  settings when both are executed;
+- reports include requested device, actual device, dtype, PyTorch version, CUDA
+  availability, GPU name when applicable, and other dependency metadata;
+- reports include total objective and progress/safety/jerk components for
+  training and held-out evaluation;
 - a clear result on whether one-step descent predicts iterative optimization.
 
 ### Decision gate

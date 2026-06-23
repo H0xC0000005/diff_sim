@@ -1,8 +1,9 @@
 # Milestone 1: Local Gradient Utility
 
-Status: Approved
+Status: Closed
 Approval date: 2026-06-19
 Amended: 2026-06-22
+Closed: 2026-06-23
 
 ## Purpose
 
@@ -525,10 +526,49 @@ Stop Phase D and request a plan amendment if:
 
 - Milestone 2 iterative structured optimization.
 - Milestone 3 MLP training.
-- CPU or CUDA memory study.
+- Detailed batching/performance engineering and memory profiling, unless
+  Milestone 2 timing evidence justifies a separate approved implementation.
 - Sawtooth/noisy emergency-brake stress profiles.
 - Any further objective reweighting based on diagnostic-only semantic weights.
 - Any change to Milestone 0 simulator semantics.
+
+## Phase F Closure And Milestone 2 Handoff
+
+Milestone 1 Phase F is closed as of 2026-06-23. Milestone 1 is closed as
+passing for its approved Stage 1 purpose.
+
+Closed Milestone 1 evidence:
+
+- normalized-input gradients beat matched random beta-space directions for every
+  approved horizon at the primary alpha `0.1`;
+- `K=6`, `K=10`, and `K=T` were the most reliable normalized horizons in the
+  expanded six-initialization run;
+- full gradient `K=T` produced the strongest mean relative one-step objective
+  improvement;
+- truncated gradients are not merely full gradients with smaller norms, because
+  cosine similarity to the full-gradient direction increases with horizon;
+- SI-unit validation was weak at the primary alpha and is treated as evidence
+  that normalized inputs should be the Milestone 2 path, not as a separate
+  Milestone 2 branch.
+
+Milestone 2 handoff decisions from Phase F review:
+
+- use normalized controller inputs only;
+- keep horizons `K=[1,3,6,10,T]`;
+- keep the six approved initializations
+  `T_init=[0.9,1.2,1.4,1.6,1.9,2.2]`;
+- use one shared optimizer policy across horizons, with no per-horizon tuning;
+- decide optimizer family, learning-rate/search procedure, optimizer
+  parameters, optimization budget, evaluation frequency, logging frequency, and
+  CPU/GPU parity tolerances during Milestone 2 planning;
+- include both CPU and CUDA execution in Milestone 2 after CPU/GPU parity checks;
+- CPU must duplicate the full GPU Milestone 2 run as a faithful comparison;
+- batching across scenarios or initializations is not first-hand scope and
+  should be added only if preliminary timing evidence justifies it and the user
+  approves that scope.
+
+These handoff decisions guide Milestone 2 planning but do not themselves start
+Milestone 2 implementation.
 
 ## Amendment History
 
@@ -539,6 +579,10 @@ Stop Phase D and request a plan amendment if:
 - 2026-06-22: Phase D/E feedback amendment expands initialization centers to
   `T_init=[0.9,1.2,1.4,1.6,1.9,2.2]` with seeds `0..5`, and requires
   human-readable all-alpha result reporting.
+- 2026-06-23: Phase F closes Milestone 1 as passing and records Milestone 2
+  handoff decisions for normalized-only structured optimization, full horizon
+  set, six initializations, shared optimizer policy, CPU/CUDA full duplicate
+  runs after parity checks, and deferred batching.
 
 ## Superseded Draft
 

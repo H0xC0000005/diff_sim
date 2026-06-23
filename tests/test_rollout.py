@@ -2,12 +2,28 @@ import torch
 
 from differential_sim.idm import IDMParameters
 from differential_sim.rollout import RolloutConfig, rollout_follower
-from differential_sim.scenarios import ScenarioConfig, leader_profile
+from differential_sim.scenarios import ScenarioConfig, leader_profile, random_braking_cycle_events
 
 
 def test_leader_profiles_are_deterministic_and_finite():
-    for kind in ("constant", "braking_recovery", "sinusoidal"):
-        config = ScenarioConfig(kind=kind, steps=20, dt=0.2)
+    configs = [
+        ScenarioConfig(kind="constant", steps=20, dt=0.2),
+        ScenarioConfig(kind="braking_recovery", steps=20, dt=0.2),
+        ScenarioConfig(kind="sinusoidal", steps=20, dt=0.2),
+        ScenarioConfig(kind="random_braking_cycles", steps=20, dt=0.2, seed=101),
+        ScenarioConfig(
+            kind="multi_pulse_braking",
+            steps=20,
+            dt=0.2,
+            pulse_starts=(1.0, 2.5),
+            pulse_brake_delta_v=(1.0, 1.5),
+            pulse_brake_durations=(0.6, 0.8),
+            pulse_recovery_durations=(0.8, 1.0),
+        ),
+        ScenarioConfig(kind="chirp_sinusoidal", steps=20, dt=0.2),
+        ScenarioConfig(kind="mixed_regime", steps=80, dt=0.2),
+    ]
+    for config in configs:
         first = leader_profile(config, dtype=torch.float64)
         second = leader_profile(config, dtype=torch.float64)
         assert torch.equal(first.time, second.time)
@@ -15,6 +31,13 @@ def test_leader_profiles_are_deterministic_and_finite():
         assert torch.equal(first.speed, second.speed)
         assert torch.isfinite(first.position).all()
         assert torch.isfinite(first.speed).all()
+
+
+def test_random_braking_cycle_sampled_events_are_deterministic():
+    config = ScenarioConfig(kind="random_braking_cycles", steps=20, dt=0.2, seed=101)
+
+    assert random_braking_cycle_events(config) == random_braking_cycle_events(config)
+    assert random_braking_cycle_events(config)
 
 
 def test_rollout_shapes_and_determinism():
