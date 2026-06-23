@@ -1,6 +1,6 @@
 import torch
 
-from differential_sim.fit import (
+from differential_sim.milestone0_fit import (
     FitConfig,
     autograd_directional_derivative,
     central_finite_difference_directional_derivative,

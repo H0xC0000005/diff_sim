@@ -17,7 +17,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from differential_sim.fit import (
+from differential_sim.milestone0_fit import (
     FitConfig,
     fit_synthetic_parameters,
     generate_synthetic_trajectory,

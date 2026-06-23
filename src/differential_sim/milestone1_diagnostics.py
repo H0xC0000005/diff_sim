@@ -19,7 +19,7 @@ from differential_sim.controllers import (
     noisy_center_betas,
     tensor_to_list,
 )
-from differential_sim.gradient_modes import default_rollout_config, objective_for_scenarios
+from differential_sim.temporal_gradients import default_rollout_config, objective_for_scenarios
 from differential_sim.objectives import (
     ObjectiveConfig,
     component_floats,

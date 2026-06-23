@@ -1,8 +1,8 @@
 import torch
 
 from differential_sim.controllers import StructuredHeadwayController, center_beta
-from differential_sim.diagnostics import diagnostic_scenarios
-from differential_sim.gradient_modes import (
+from differential_sim.milestone1_diagnostics import diagnostic_scenarios
+from differential_sim.temporal_gradients import (
     default_rollout_config,
     max_forward_difference,
     objective_for_scenarios,

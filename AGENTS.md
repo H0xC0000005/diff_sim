@@ -202,6 +202,11 @@ states otherwise.
 12. Run relevant tests after each material change.
 13. Never place secrets, credentials, or private data in the repository.
 14. Do not modify or delete user data or existing results unless explicitly asked.
+15. If a command is likely to fail because of sandboxing or restricted access
+    rather than true project/environment state, request escalation for explicit
+    user approval and rerun the same diagnostic or action before drawing
+    conclusions. This includes GPU/driver visibility, network access,
+    filesystem permissions outside the workspace, and other host resources.
 
 ## Required validation discipline
 

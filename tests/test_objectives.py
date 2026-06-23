@@ -1,6 +1,6 @@
 import torch
 
-from differential_sim.gradient_modes import default_rollout_config
+from differential_sim.temporal_gradients import default_rollout_config
 from differential_sim.objectives import default_idm_params, rollout_objective, semantic_inverse_mean_weights
 from differential_sim.rollout import rollout_follower
 from differential_sim.scenarios import ScenarioConfig, leader_profile

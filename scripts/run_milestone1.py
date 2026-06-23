@@ -12,7 +12,7 @@ import torch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from differential_sim.diagnostics import run_one_step_diagnostics, write_jsonl
+from differential_sim.milestone1_diagnostics import run_one_step_diagnostics, write_jsonl
 
 
 REPORT_DIR = ROOT / "reports" / "milestone1"

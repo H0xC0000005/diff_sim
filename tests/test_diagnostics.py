@@ -1,6 +1,11 @@
 import torch
 
-from differential_sim.diagnostics import PRIMARY_ALPHA, diagnostic_scenarios, generate_random_directions, run_one_step_diagnostics
+from differential_sim.milestone1_diagnostics import (
+    PRIMARY_ALPHA,
+    diagnostic_scenarios,
+    generate_random_directions,
+    run_one_step_diagnostics,
+)
 
 
 def test_random_directions_are_unit_norm_and_deterministic():
