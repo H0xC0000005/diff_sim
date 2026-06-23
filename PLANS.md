@@ -1,16 +1,5 @@
 # PLANS.md
 
-## Plan status
-
-Current mainline:
-
-> Gradient-horizon utility transfer in a deterministic differentiable IDM task.
-
-Current milestone: **Milestone 0 — minimal simulator reproduction**.
-
-Do not implement later milestones until Milestone 0 acceptance criteria pass and
-the user explicitly requests continuation.
-
 ## Milestone 0 — minimal reproduction
 
 ### Goal

@@ -259,3 +259,7 @@ The following are outside the initial mainline:
 - broad benchmark packaging.
 
 They may be revisited only after the main hypotheses have been tested.
+
+
+## 13. Final Notes 
+If the user override the project defaults in interactive session, report the override and accept the user override by default.
