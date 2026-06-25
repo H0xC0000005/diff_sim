@@ -190,8 +190,18 @@ Requirements:
 4. No gradient mode receives separately tuned weights.
 5. Final evaluation reports individual components as well as the total objective.
 
-Exact weights and safe-gap definition are **Open** until the first simulator
-reproduction is complete.
+The mainline objective was fixed before Milestone 1 comparison:
+
+```text
+progress_weight = 1.0
+safety_weight = 0.7
+jerk_weight = 5.0
+```
+
+The implemented normalized component scales and safe-gap definition are
+documented in `src/differential_sim/objectives.py` and the closed milestone
+plans. They must remain identical across gradient horizons. Any objective
+reweighting is a separate scientific sensitivity study and requires approval.
 
 ## 10. Primary measurements
 
@@ -227,10 +237,42 @@ weak at the primary alpha and should be treated as parameterization-sensitivity
 evidence, not as a Milestone 2 branch, unless a later approved plan opens a
 separate parameterization study.
 
+Milestone 2 closed as passing on 2026-06-24. Under the approved shared Adam
+procedure, the held-out ranking exactly matched Milestone 1:
+
+`K=80 > K=10 > K=6 > K=3 > K=1`
+
+The descriptive Spearman rank correlation was `1.0`. Full gradient `K=80` was
+best, and `K=10` was the best non-full horizon. H1 is supported for the fixed
+structured-controller experiment.
+
+The closed result also shows that truncated modes converge reproducibly to
+horizon-specific inferior controllers. The most supported interpretation is
+structural bias from omitted recurrent state-mediated temporal sensitivity,
+not numerical failure or insufficient updates. More scenario samples may
+reduce variance but do not generally restore omitted temporal derivatives.
+
 ### Stage 3: small-model training
 
 Train the same small MLP with selected gradient modes. Compare held-out objective,
 individual loss components, convergence, and stability.
+
+Milestone 3 Phase A should begin from these Milestone 2 handoff defaults:
+
+- compare `K=80` and `K=10`;
+- use paired identical MLP initializations across horizons and multiple fixed
+  model seeds;
+- preserve normalized inputs, bounded output, objective, simulator, and
+  train/held-out split;
+- choose a new shared optimizer/LR policy and update budget for the MLP rather
+  than inheriting structured-controller values;
+- remeasure CPU/CUDA execution for the fixed MLP architecture;
+- preserve held-out no-grad evaluation because training and held-out changes
+  were not always aligned in Milestone 2.
+
+Exact Milestone 3 architecture, optimizer, seed count, budget, device policy,
+batching, and optional gradient-alignment diagnostics remain Open until the
+Milestone 3 planning workflow.
 
 ## 11. Scientific controls
 

@@ -1,7 +1,8 @@
 # Milestone 2 D.1: CPU/GPU Infrastructure And Parity
 
-Status: Approved
+Status: Completed and closed as a passing Milestone 2 prerequisite
 Approval date: 2026-06-23
+Closure date: 2026-06-24
 
 ## Scope
 
@@ -232,3 +233,21 @@ Stop before continuing and report if:
 This approved D.1 plan supersedes only the D.1 portions of
 `temp_content/temp_plan/milestone_2_d1_cpu_gpu_infrastructure_phase_a_b_proposal.md`.
 It does not approve or freeze the D.2 direct optimization plan.
+
+## Phase F Closure
+
+This D.1a prerequisite is closed as passing within the closed Milestone 2.
+
+Accepted evidence:
+
+- CPU/CUDA parity passed for all approved horizons and initializations;
+- maximum trajectory, objective, beta, and gradient differences remained within
+  the approved tolerances;
+- CUDA was valid scientifically but slower than CPU for the unbatched
+  structured-controller workload;
+- CUDA visibility from Codex requires escalation when sandboxing hides host GPU
+  resources.
+
+Later D.1b and D.2 decisions superseded the provisional D.1a runtime and
+execution recommendations. The raw D.1a evidence remains authoritative for
+device parity, not for Milestone 3 device selection.

@@ -1,7 +1,8 @@
 # Milestone 2 D.1b: GPU Scenario Batching Infrastructure
 
-Status: Approved
+Status: Completed and closed as a passing Milestone 2 prerequisite
 Approval date: 2026-06-24
+Closure date: 2026-06-24
 
 ## Scope
 
@@ -373,3 +374,24 @@ It supplements, and does not supersede, the completed D.1a plan:
 `docs/milestones/milestone_2_cpu_gpu_infrastructure.md`
 
 It does not approve or freeze the Milestone 2 D.2 direct optimization plan.
+
+## Phase F Closure
+
+This D.1b prerequisite is closed as passing within the closed Milestone 2.
+
+Accepted observations:
+
+- scenario batching is deterministic full-dataset vectorization, not
+  mini-batch SGD;
+- batched and unbatched paths use the same 14-scenario mean gradient and take
+  one optimizer update only after the complete dataset is evaluated;
+- all 180 parity rows passed, including per-scenario objectives, gradients,
+  final beta values, and improvement/failure flags;
+- scenario-batched CPU reduced training objective/backward time to about
+  `6.7%-7.4%` of unbatched CPU time;
+- scenario-batched CUDA was about `2.36x-2.54x` slower than scenario-batched
+  CPU for this four-parameter controller on the tested V100.
+
+Phase F accepts scenario-batched CPU as the D.2 execution path. This does not
+establish the best device for Milestone 3; the MLP workload must receive its
+own timing and, if CUDA is used, parity checks.

@@ -94,8 +94,16 @@ If no gradient mode beats random directions:
 
 ## Milestone 2 — direct structured optimization
 
-Status: Next milestone to plan. Do not implement before the normal milestone
-planning gate.
+Status: Closed as passing on 2026-06-24. See
+`docs/milestones/milestone_2_iterative_structured_optimization.md` for the
+approved plan and Phase F closure, and
+`reports/milestone2/closure_and_milestone3_handoff.md` for the concise evidence
+and Milestone 3 handoff.
+
+The original required-work list below records the pre-planning milestone
+intent. The later approved D.1b/D.2 plans superseded its provisional device and
+batching assumptions: D.2 used validated scenario-batched CPU execution and did
+not run a redundant full CUDA experiment.
 
 ### Goal
 
@@ -152,14 +160,20 @@ four-parameter controller.
 
 ### Decision gate
 
-Proceed to Milestone 3 only if:
+The decision gate passed:
 
-- at least one mode learns a nontrivial controller;
-- the Stage 2 outcome is stable across a small number of seeds or initializations;
-- the remaining question requires a learned model rather than further direct
-  optimization analysis.
+- all five modes learned finite stable controllers;
+- `K=80` and `K=10` improved held-out objective for all six initializations;
+- the Stage 2 ranking exactly matched Stage 1;
+- the remaining H2 question requires a learned model.
+
+Milestone 2 closure selected `K=80` and `K=10` as the evidence-backed pair for
+Milestone 3 planning. This selection does not start or approve Milestone 3.
 
 ## Milestone 3 — small-model training
+
+Status: Next milestone to plan. Do not implement before the normal milestone
+planning gate.
 
 ### Goal
 
@@ -176,6 +190,29 @@ to a small MLP.
    - the best non-full gradient from Milestone 2.
 4. Use identical initialization protocol and training budget.
 5. Evaluate on held-out profile families.
+
+### Milestone 2 handoff defaults
+
+Use these as Phase A starting points, not as already approved Milestone 3
+settings:
+
+- compare `K=80` and `K=10`;
+- preserve normalized inputs, bounded headway output, simulator, objective,
+  scenario split, and held-out no-grad isolation;
+- pair identical initial MLP weights across horizons and use multiple fixed
+  model seeds;
+- select one shared training-only optimizer/LR policy with no per-horizon
+  tuning;
+- determine the update budget from MLP-specific convergence evidence;
+- remeasure CPU/CUDA performance for the fixed MLP architecture and complete
+  parity checks before using CUDA results as main evidence;
+- retain component, safety, convergence, failure, and held-out reporting;
+- do not treat more scenario samples as an automatic correction for temporal
+  truncation bias.
+
+Open choices include architecture width, seed count, optimizer/LR grid, update
+budget, logging cadence, device policy, batching scope, and optional
+gradient-alignment diagnostics.
 
 ### Acceptance criteria
 

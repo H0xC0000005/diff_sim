@@ -1,3 +1,7 @@
+*.pptx
+*.ppt
+
+
 **/temp_content
 **/reports
 
