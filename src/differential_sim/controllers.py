@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
-from typing import Literal, Sequence
+from typing import Literal, Protocol, Sequence
 
 import torch
 
@@ -14,6 +14,12 @@ from differential_sim.scenarios import ScenarioConfig, leader_profile
 
 
 InputParameterization = Literal["normalized", "si_units"]
+
+
+class HeadwayController(Protocol):
+    """Callable controller contract used by temporal rollout functions."""
+
+    def __call__(self, parameters: torch.Tensor, inputs: torch.Tensor) -> torch.Tensor: ...
 
 
 @dataclass(frozen=True)
@@ -58,6 +64,42 @@ class StructuredHeadwayController:
             raise ValueError(f"expected beta shape [4], got {tuple(beta.shape)}")
         z = self.transform_inputs(inputs)
         logits = beta[0] + torch.sum(beta[1:] * z, dim=-1)
+        return self.bounds.minimum + (self.bounds.maximum - self.bounds.minimum) * torch.sigmoid(logits)
+
+
+class SmallMLPHeadwayController(torch.nn.Module):
+    """One-hidden-layer bounded headway controller for Milestone 3."""
+
+    def __init__(
+        self,
+        normalization: InputNormalization,
+        *,
+        hidden_width: int = 16,
+        bounds: HeadwayBounds = HeadwayBounds(),
+        dtype: torch.dtype = torch.float64,
+        device: torch.device | str = "cpu",
+    ) -> None:
+        super().__init__()
+        if hidden_width != 16:
+            raise ValueError("Milestone 3 requires hidden_width=16")
+        self.hidden_width = hidden_width
+        self.bounds = bounds
+        self.register_buffer("input_mean", normalization.mean.detach().clone().to(dtype=dtype, device=device))
+        self.register_buffer("input_sigma", normalization.sigma.detach().clone().to(dtype=dtype, device=device))
+        self.hidden = torch.nn.Linear(3, hidden_width, dtype=dtype, device=device)
+        self.output = torch.nn.Linear(hidden_width, 1, dtype=dtype, device=device)
+
+    def transform_inputs(self, inputs: torch.Tensor) -> torch.Tensor:
+        if inputs.shape[-1] != 3:
+            raise ValueError(f"expected last dimension 3, got {inputs.shape}")
+        return (inputs - self.input_mean.to(inputs)) / self.input_sigma.to(inputs)
+
+    def forward(self, parameters: torch.Tensor, inputs: torch.Tensor) -> torch.Tensor:
+        """Return bounded headway; ``parameters`` is an unused rollout adapter."""
+
+        del parameters
+        hidden = torch.tanh(self.hidden(self.transform_inputs(inputs)))
+        logits = self.output(hidden).squeeze(-1)
         return self.bounds.minimum + (self.bounds.maximum - self.bounds.minimum) * torch.sigmoid(logits)
 
 

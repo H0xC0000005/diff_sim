@@ -7,7 +7,7 @@ from typing import Sequence
 
 import torch
 
-from differential_sim.controllers import StructuredHeadwayController
+from differential_sim.controllers import HeadwayController
 from differential_sim.idm import (
     IDMParameters,
     diffidm_acceleration,
@@ -57,7 +57,7 @@ def rollout_batched_scenarios_with_controller(
     scenarios: BatchedScenarioData,
     *,
     beta: torch.Tensor,
-    controller: StructuredHeadwayController,
+    controller: HeadwayController,
     base_params: IDMParameters,
     rollout_config: RolloutConfig,
     horizon_k: int,
@@ -197,7 +197,7 @@ def objective_for_batched_scenarios(
     scenario_configs: Sequence[tuple[str, ScenarioConfig]],
     *,
     beta: torch.Tensor,
-    controller: StructuredHeadwayController,
+    controller: HeadwayController,
     base_params: IDMParameters,
     rollout_config: RolloutConfig,
     horizon_k: int,

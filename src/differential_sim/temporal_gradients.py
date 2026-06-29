@@ -7,7 +7,7 @@ from typing import Sequence
 
 import torch
 
-from differential_sim.controllers import StructuredHeadwayController
+from differential_sim.controllers import HeadwayController
 from differential_sim.idm import IDMParameters, diffidm_acceleration, parameters_to_tensors
 from differential_sim.objectives import ObjectiveComponents, ObjectiveConfig, mean_scenario_objective
 from differential_sim.rollout import InitialFollowerState, RolloutConfig, RolloutResult
@@ -24,7 +24,7 @@ def rollout_with_controller(
     *,
     leader,
     beta: torch.Tensor,
-    controller: StructuredHeadwayController,
+    controller: HeadwayController,
     base_params: IDMParameters,
     rollout_config: RolloutConfig,
     horizon_k: int,
@@ -101,7 +101,7 @@ def rollout_scenarios_with_controller(
     scenario_configs: Sequence[tuple[str, ScenarioConfig]],
     *,
     beta: torch.Tensor,
-    controller: StructuredHeadwayController,
+    controller: HeadwayController,
     base_params: IDMParameters,
     rollout_config: RolloutConfig,
     horizon_k: int,
@@ -129,7 +129,7 @@ def objective_for_scenarios(
     scenario_configs: Sequence[tuple[str, ScenarioConfig]],
     *,
     beta: torch.Tensor,
-    controller: StructuredHeadwayController,
+    controller: HeadwayController,
     base_params: IDMParameters,
     rollout_config: RolloutConfig,
     horizon_k: int,
