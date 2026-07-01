@@ -1,0 +1,36 @@
+milestone: sg1
+objective:
+  progress_weight: 1.0
+  safety_weight: 0.7
+  jerk_weight: 5.0
+model_seeds: [1000, 1001, 1002, 1003, 1004, 1005]
+dense_references:
+  horizons: [80, 50, 10]
+sparse_full_horizon:
+  strides: [2, 4, 6, 8]
+  approximation: b1_anchored_macro_step
+optimizer:
+  name: Adam
+  learning_rate: 0.001
+  betas: [0.9, 0.999]
+  eps: 1.0e-8
+  weight_decay: 0.0
+  amsgrad: false
+budget:
+  updates: 1200
+logging:
+  detail_interval: 30
+execution:
+  device: cpu
+  dtype: float64
+  mode: scenario-batched
+stage0:
+  one_step_alpha: 0.001
+  gradient_norm_epsilon: 1.0e-12
+  equivalence_band: 0.01
+validation:
+  trajectory_atol: 1.0e-10
+  scalar_atol: 1.0e-10
+  scalar_rtol: 1.0e-8
+  nonzero_gradient_norm: 1.0e-12
+  dense_equivalent_vjp_relative_norm: 0.0001

@@ -54,6 +54,29 @@ model on held-out traffic scenarios.
 These are hypotheses to test. Failure of either hypothesis is scientifically
 informative.
 
+### H3 — sparse long-horizon gradients can preserve useful temporal signal
+
+After H1 and H2, the next methodological question is whether the useful
+long-horizon signal from full temporal gradients can be retained with lower
+backward temporal resolution.
+
+A sparse long-horizon gradient keeps the forward rollout and objective at the
+original time resolution, but exposes only selected checkpoint-to-checkpoint
+dependencies in the backward graph. This is a hypothesis about gradient
+construction, not a proposal to simulate fewer forward steps.
+
+### H4 — hybrid dense-short and sparse-long gradients can combine local and long-range utility
+
+If sparse long-horizon gradients retain useful signal, a later hybrid method may
+combine dense full-resolution gradients over a recent short window with sparse
+longer-range checkpoint gradients. This tests whether short-term local effects
+and long-term bias-correction effects can be represented at different backward
+resolutions.
+
+H3 and H4 are hypotheses, not assumed conclusions. They require held-out
+downstream validation and must preserve the same forward values as the dense
+baseline.
+
 ## 4. Intended contribution
 
 The intended contribution is not:
@@ -257,22 +280,63 @@ reduce variance but do not generally restore omitted temporal derivatives.
 Train the same small MLP with selected gradient modes. Compare held-out objective,
 individual loss components, convergence, and stability.
 
-Milestone 3 Phase A should begin from these Milestone 2 handoff defaults:
+Milestone 3 base and aggressive objective-weight sensitivity runs support H2
+for the approved deterministic small-MLP experiments. In both objective
+profiles, the held-out ranking was:
 
-- compare `K=80` and `K=10`;
-- use paired identical MLP initializations across horizons and multiple fixed
-  model seeds;
-- preserve normalized inputs, bounded output, objective, simulator, and
-  train/held-out split;
-- choose a new shared optimizer/LR policy and update budget for the MLP rather
-  than inheriting structured-controller values;
-- remeasure CPU/CUDA execution for the fixed MLP architecture;
-- preserve held-out no-grad evaluation because training and held-out changes
-  were not always aligned in Milestone 2.
+`K=80 > K=50 > K=35 > K=20 > K=10 > K=6`
 
-Exact Milestone 3 architecture, optimizer, seed count, budget, device policy,
-batching, and optional gradient-alignment diagnostics remain Open until the
-Milestone 3 planning workflow.
+The full temporal gradient remained best by held-out median, `K=50` was the
+best truncated horizon, and the short horizons remained substantially weaker.
+The aggressive objective profile changed the magnitude and shape of the
+horizon-response curve but not the qualitative ranking.
+
+The result supports moving from "does temporal horizon matter?" to "can useful
+long-horizon temporal information be preserved more efficiently?"
+
+### Stage SG1: sparse long-horizon gradient resolution
+
+SG1 tests H3. It should preserve the exact full-resolution forward rollout and
+objective while lowering only the backward temporal resolution through
+checkpoint-level sparse gradient connectivity.
+
+Conceptually:
+
+- run the same full-resolution forward rollout;
+- record checkpoint states and span losses;
+- construct a sparse checkpoint-to-checkpoint backward surrogate;
+- compare sparse full-horizon gradients against dense `K=80`, dense `K=50`,
+  and dense `K=10` baselines;
+- use gradient-only admission before full training;
+- evaluate downstream held-out utility, component tradeoffs, gradient alignment,
+  runtime, and memory.
+
+SG1 should use `T=80` as the primary comparison because it preserves
+comparability with Milestone 3. Sparse truncated gradients such as `K=50` with
+sparse stride, and longer `T=160` stress tests, are conditional add-ons after
+sparse full-horizon behavior at `T=80` is informative.
+
+Open SG1 decisions include span sensitivity computation, checkpoint state
+definition, stride values, admission criteria, optimizer/LR policy, budget,
+validation tolerances, and exact reporting layout.
+
+### Stage SG2: hybrid dense-short plus sparse-long gradients
+
+SG2 tests H4 and should start only if SG1 shows that sparse long-horizon
+connectivity carries useful signal.
+
+Conceptually:
+
+- use dense full-resolution gradients for a recent short temporal window;
+- use sparse checkpoint gradients for older long-range dependencies;
+- combine them by a predeclared objective-consistent rule;
+- compare against dense `K=80`, dense `K=50`, dense `K=10`, and the SG1 sparse
+  full-horizon method.
+
+The default scientific intent is to test whether local short-term effects and
+long-range bias-correction effects can be represented at different backward
+resolutions without changing forward values. Tuned blend weights or per-method
+objectives would be separate scientific choices and require approval.
 
 ## 11. Scientific controls
 
@@ -310,7 +374,11 @@ The following are outside the initial mainline:
 - large multi-agent networks;
 - broad benchmark packaging.
 
-They may be revisited only after the main hypotheses have been tested.
+They may be revisited only after the main hypotheses or approved sparse-gradient
+follow-ups have been tested. Fixed-order multi-follower platoons, hard-simulator
+validation, and matched sample-based comparisons are recognized as plausible
+later methodological studies, but they are not SG1 or SG2 scope unless a later
+approved plan says otherwise.
 
 
 ## 13. Final Notes 
